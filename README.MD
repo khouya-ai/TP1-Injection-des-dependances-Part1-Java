@@ -57,8 +57,7 @@ On va essayer d'implimenter l'exemple suivant:
     
     ```
 6. Faire l'injection des dépendances :
-   - Par instanciation statique
-     - En utilisant le Setter
+   - Par instanciation statique via le Setter
     ```java
     public class PresentationV1 {
         public static void main(String[] args) {
@@ -70,7 +69,8 @@ On va essayer d'implimenter l'exemple suivant:
         }
     }
     ```
-    - En utilisant le constructeur 
+
+    - Par instanciation statique via le constructeur 
     ```java
     public class PresentationV1 {
         public static void main(String[] args) {
@@ -92,6 +92,27 @@ On va essayer d'implimenter l'exemple suivant:
     
     }
     ```
+   Maintenant nous voulons creer une autre implimentation de l'interface IDao [DaoImplV2.java](src/main/java/ext/DaoImplV2.java)
+```java
+public class DaoImplV2 implements IDao {
+    @Override
+    public double getData() {
+        System.out.println("Version Web Service");
+        double temp = 11;
+        return temp;
+    }
+}
+```
+Pour l'utiliser on est obligé de changer le code dans [PresentationV1.java](src/main/java/pres/PresentationV1.java)
+```java
+public class PresentationV1 {
+    public static void main(String[] args) {
+        IDao dao = new DaoImplV2(); // Changement
+        MetierImpl metier = new MetierImpl(dao); 
+        System.out.println("Resulat = " + metier.calcul());
+    }
+}
+```
    - b. Par instanciation dynamique
    - c. En utilisant le Framework Spring
      - Version XML
