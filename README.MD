@@ -5,93 +5,91 @@ Ce TP permet d'appliquer les bonnes pratiques de développement, comme avoir une
 On va essayer d'implementer l'exemple suivant:
 
 ![img.png](images/img.png)
-1. Créer des couches dao, metier et presentation
-
-    ![img_1.png](img_1.png)
-2. Créer l'interface IDao avec une méthode getData
+### Creation des couches dao, metier et presentation
+![img_1.png](img_1.png)
+### Creation de l'interface IDao avec une méthode getData
     ```java
     public interface IDao {
         double getData();
     }
     ```
-3. Créer une implémentation de cette interface
-   ```java
-    public class DaoImpl implements IDao {
-    @Override
-    public double getData() {
-      System.out.println("Version base de données");
-      double temp = 23;
-      return temp;
-     }
-    }
-    ```
-4. Créer l'interface IMetier avec une méthode calcul
-    ```java
-    public interface IMetier {
-        double calcul();
-    
-        public void setDao(IDao dao);
-    }
-    ```
-5. Créer une implémentation de cette interface en utilisant le couplage faible
-    ```java
-    public class MetierImpl implements IMetier {
-    
-        //Couplage faible
-        private IDao dao = null;
-    
-        @Override
-        public double calcul() {
-            double t = dao.getData();
-            double res = t * 23;
-            return res;
-        }
-    
-        // Pour Injecter dans la variable dao un objet
-        // d'une classe qui imlémente dl'interface IDao
-        @Override
-        public void setDao(IDao dao) {
-            this.dao = dao;
-        }
-    }
-    
-    ```
-6. Faire l'injection des dépendances :
-   - Par instanciation statique via le Setter
-    ```java
-    public class PresentationV1 {
-        public static void main(String[] args) {
-            // Injection des dépendances par instanciation statique (new)
-            DaoImpl dao = new DaoImpl();
-            MetierImpl metier = new MetierImpl();
-            metier.setDao(dao); // Injection via le setter
-            System.out.println("Resulat = " + metier.calcul());
-        }
-    }
-    ```
+### Creation d'une implémentation de cette interface
+```java
+public class DaoImpl implements IDao {
+@Override
+public double getData() {
+  System.out.println("Version base de données");
+  double temp = 23;
+  return temp;
+ }
+}
+```
+### Creation de l'interface IMetier avec une méthode calcul
+```java
+public interface IMetier {
+    double calcul();
 
-    - Par instanciation statique via le constructeur 
-    ```java
-    public class PresentationV1 {
-        public static void main(String[] args) {
-            // Injection des dépendances par instanciation statique (new)
-            DaoImpl dao = new DaoImpl();
-            MetierImpl metier = new MetierImpl(dao); // Injection via constructeur
-            System.out.println("Resulat = " + metier.calcul());
-        }
+    public void setDao(IDao dao);
+}
+```
+### Creation d'une implémentation de cette interface en utilisant le couplage faible
+```java
+public class MetierImpl implements IMetier {
+
+    //Couplage faible
+    private IDao dao = null;
+
+    @Override
+    public double calcul() {
+        double t = dao.getData();
+        double res = t * 23;
+        return res;
     }
-     // on ajoute les deux constructeur 
-    public class MetierImpl implements IMetier {
-    
-        public MetierImpl() { // pour le setter
-        }
-    
-        public MetierImpl(IDao dao) { // pour l'injection via constructreur
-            this.dao = dao;
-        }
-    
+
+    // Pour Injecter dans la variable dao un objet
+    // d'une classe qui imlémente dl'interface IDao
+    @Override
+    public void setDao(IDao dao) {
+        this.dao = dao;
     }
-    ```
+}
+```
+## L'injection des dépendances :
+### <u>Injection par instanciation statique via le Setter</u>
+ ```java
+ public class PresentationV1 {
+     public static void main(String[] args) {
+         // Injection des dépendances par instanciation statique (new)
+         DaoImpl dao = new DaoImpl();
+         MetierImpl metier = new MetierImpl();
+         metier.setDao(dao); // Injection via le setter
+         System.out.println("Resulat = " + metier.calcul());
+     }
+ }
+ ```
+
+### <u>Injection par instanciation statique via le constructeur </u>
+```java
+public class PresentationV1 {
+    public static void main(String[] args) {
+        // Injection des dépendances par instanciation statique (new)
+        DaoImpl dao = new DaoImpl();
+        MetierImpl metier = new MetierImpl(dao); // Injection via constructeur
+        System.out.println("Resulat = " + metier.calcul());
+    }
+}
+ // on ajoute les deux constructeur 
+public class MetierImpl implements IMetier {
+
+    public MetierImpl() { // pour le setter
+    }
+
+    public MetierImpl(IDao dao) { // pour l'injection via constructreur
+        this.dao = dao;
+    }
+
+}
+```
    Maintenant nous voulons creer une autre implimentation de l'interface IDao [DaoImplV2.java](src/main/java/ext/DaoImplV2.java)
 ```java
 public class DaoImplV2 implements IDao {
@@ -113,13 +111,13 @@ public class PresentationV1 {
     }
 }
 ```
-   - Par instanciation dynamique via le constructeur
-      1. créer un fichier [config.txt](config.txt)
-         ```text
-         dao.DaoImpl
-         metier.MetierImpl
-         ```
-     2. créer une class [PresentationV2.java](src/main/java/pres/PresentationV2.java) pour refaire le code statique dans [PresentationV1.java](src/main/java/pres/PresentationV1.java) dynamiquement via le fichier **config.txt**
+### <u>Injection par instanciation dynamique via le constructeur</u>
+1. créer un fichier [config.txt](config.txt)
+   ```text
+   dao.DaoImpl
+   metier.MetierImpl
+   ```
+ 2. créer une class [PresentationV2.java](src/main/java/pres/PresentationV2.java) pour refaire le code statique dans [PresentationV1.java](src/main/java/pres/PresentationV1.java) dynamiquement via le fichier **config.txt**
 
 ```java
 public class PresentationV2 {
@@ -144,7 +142,7 @@ public class PresentationV2 {
     }
 }
 ```
-- Par instanciation dynamique via le setter
+### <u>Injection par instanciation dynamique via le setter</u>
 
 ```java
 public class PresentationV2 {
@@ -175,6 +173,6 @@ public class PresentationV2 {
    }
 }
 ```
-   - c. En utilisant le Framework Spring
-     - Version XML
-     - Version annotations
+- c. En utilisant le Framework Spring
+  - Version XML
+  - Version annotations
