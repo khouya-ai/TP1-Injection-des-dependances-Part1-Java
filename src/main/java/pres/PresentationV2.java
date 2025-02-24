@@ -7,6 +7,7 @@ import metier.MetierImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class PresentationV2 {
@@ -23,7 +24,13 @@ public class PresentationV2 {
             // equivalent à MetierImpl metier = new MetierImpl(dao);
             String metierClassName = scanner.nextLine();
             Class cMetier = Class.forName(metierClassName);
-            IMetier metier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(dao);
+            IMetier metier = (IMetier) cMetier.getConstructor().newInstance();
+
+             // Injection via setter
+            // equivalent à metier.setDao(dao);
+            Method setDaoMethod = cMetier.getDeclaredMethod("setDao", IDao.class);
+            setDaoMethod.invoke(metier, dao);
+
             System.out.println("Resulat = " + metier.calcul());
         } catch (Exception e) {
             System.out.println(e.getMessage());
