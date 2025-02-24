@@ -14,6 +14,13 @@ public class MetierImpl implements IMetier {
         return res;
     }
 
+    public MetierImpl() {
+    }
+
+    public MetierImpl(IDao dao) {
+        this.dao = dao;
+    }
+
     // Pour Injecter dans la variable dao un objet
     // d'une classe qui imlémente dl'interface IDao
     @Override
