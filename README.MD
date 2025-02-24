@@ -2,7 +2,7 @@
 
 Ce TP permet d'appliquer les bonnes pratiques de développement, comme avoir une application fermée à la modification et ouverte à l'extension, en utilisant les interfaces, l'injection de dépendances et en séparant le code en un ensemble de packages.
 
-On va essayer d'implimenter l'exemple suivant:
+On va essayer d'implementer l'exemple suivant:
 
 ![img.png](images/img.png)
 1. Créer des couches dao, metier et presentation
@@ -113,7 +113,62 @@ public class PresentationV1 {
     }
 }
 ```
-   - b. Par instanciation dynamique
+   - Par instanciation dynamique via le constructeur
+      1. créer un fichier [config.txt](config.txt)
+         ```text
+         dao.DaoImpl
+         metier.MetierImpl
+         ```
+     2. créer une class [PresentationV2.java](src/main/java/pres/PresentationV2.java) pour refaire le code statique dans [PresentationV1.java](src/main/java/pres/PresentationV1.java) dynamiquement via le fichier **config.txt**
+
+```java
+public class PresentationV2 {
+    public static void main(String[] args) {
+        try {
+            Scanner scanner = new Scanner(new File("config.txt"));
+            // Instanciation dynamique d'une implimentation de IDao
+            // equivalent à IDao dao = new DaoImplV2();
+            String daoClassName = scanner.nextLine();
+            Class cDao = Class.forName(daoClassName);
+            IDao dao = (IDao) cDao.getConstructor().newInstance();
+
+            // Instanciation dynamique d'une implimentation de IMetier
+            // equivalent à MetierImpl metier = new MetierImpl(dao);
+            String metierClassName = scanner.nextLine();
+            Class cMetier = Class.forName(metierClassName);
+            IMetier metier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(dao);
+            System.out.println("Resulat = " + metier.calcul());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+- Par instanciation dynamique via le setter
+
+```java
+public class PresentationV2 {
+    public static void main(String[] args) {
+        try {
+            Scanner scanner = new Scanner(new File("config.txt"));
+            // Instanciation dynamique d'une implimentation de IDao
+            // equivalent à IDao dao = new DaoImplV2();
+            String daoClassName = scanner.nextLine();
+            Class cDao = Class.forName(daoClassName);
+            IDao dao = (IDao) cDao.getConstructor().newInstance();
+
+            // Instanciation dynamique d'une implimentation de IMetier
+            // equivalent à MetierImpl metier = new MetierImpl(dao);
+            String metierClassName = scanner.nextLine();
+            Class cMetier = Class.forName(metierClassName);
+            IMetier metier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(dao);
+            System.out.println("Resulat = " + metier.calcul());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
    - c. En utilisant le Framework Spring
      - Version XML
      - Version annotations
